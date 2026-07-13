@@ -282,35 +282,62 @@
             <span class="brand-mark large">S</span>
             <div>
               <h1>Stanbridge Student Support Hub</h1>
-              <p>Teacher-only documentation, support planning, collaboration, and weekly Spark reports.</p>
+              <p>Teacher support documentation and weekly family communication</p>
             </div>
           </div>
           <form class="form-stack" data-form="signin">
             <label>Email
-              <input name="email" type="email" autocomplete="email" required placeholder="lena.morales@stanbridge.example" />
+              <input name="email" type="email" autocomplete="email" required placeholder="teacher@stanbridgeacademy.org" />
             </label>
             <label>Password
               <input name="password" type="password" autocomplete="current-password" required placeholder="Password" />
             </label>
-            <button class="primary-button" type="submit">Sign in</button>
+            <div class="signin-options">
+              <label><input type="checkbox" name="remember" /> Remember me</label>
+              <a href="#signin" data-action="forgot-password">Forgot password?</a>
+            </div>
+            <p class="form-error" data-form-error hidden></p>
+            <button class="primary-button" type="submit" data-default-text="Sign in">Sign in</button>
           </form>
           <div class="demo-access">
             <span>Demo access</span>
-            <button type="button" class="chip-button" data-action="demo-login" data-email="lena.morales@stanbridge.example">Teacher</button>
-            <button type="button" class="chip-button" data-action="demo-login" data-email="maren.sato@stanbridge.example">Administrator</button>
-            <small>Password: stanbridge2026</small>
+            <button type="button" class="chip-button" data-action="demo-login" data-email="lena.morales@stanbridge.example">Demo teacher</button>
+            <button type="button" class="chip-button" data-action="demo-login" data-email="maren.sato@stanbridge.example">Demo administrator</button>
           </div>
-          <p class="muted centered">First launch? <a href="#create-account">Create a teacher account</a>.</p>
+          <p class="auth-note">For authorized school staff only.</p>
+          <p class="muted centered">First launch? <a href="#create-account">Create account</a>.</p>
         </section>
         <aside class="auth-aside">
-          <div class="glass-panel">
-            <p class="eyebrow">Teacher MVP</p>
-            <h2>Understand each learner, document today, and prepare clear family communication.</h2>
-            <div class="insight-grid">
-              <span>Learning profiles</span>
-              <span>Daily observations</span>
-              <span>Team visibility</span>
-              <span>Weekly reports</span>
+          <div class="portal-preview">
+            <div class="preview-header">
+              <div>
+                <p class="eyebrow">Today at a glance</p>
+                <h2>Staff dashboard preview</h2>
+              </div>
+              <span class="status-pill ready-to-send">Prototype</span>
+            </div>
+            <div class="preview-metrics">
+              <article><strong>3</strong><span>follow-ups today</span></article>
+              <article><strong>2</strong><span>reports ready</span></article>
+              <article><strong>12</strong><span>notes this week</span></article>
+            </div>
+            <div class="preview-section">
+              <h3>Recent student notes</h3>
+              <div class="preview-list">
+                <div><span class="activity-dot"></span><p><strong>Jordan L.</strong> Visual checklist helped with writing start.</p></div>
+                <div><span class="activity-dot blue"></span><p><strong>Ava B.</strong> Headphones supported hallway transition.</p></div>
+                <div><span class="activity-dot green"></span><p><strong>Mateo C.</strong> Completed math stations with one reminder.</p></div>
+              </div>
+            </div>
+            <div class="preview-section split">
+              <article>
+                <h3>Students needing follow-up</h3>
+                <p>Nia P. · writing transition plan</p>
+              </article>
+              <article>
+                <h3>Engagement trend</h3>
+                <div class="mini-trend" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+              </article>
             </div>
           </div>
         </aside>
@@ -326,7 +353,7 @@
             <span class="brand-mark large">S</span>
             <div>
               <h1>Create Teacher Account</h1>
-              <p>Prototype accounts are stored locally on this device for demo purposes.</p>
+              <p>Set up a staff account for this prototype.</p>
             </div>
           </div>
           <form class="form-stack" data-form="create-account">
@@ -350,9 +377,10 @@
           <p class="muted centered"><a href="#signin">Back to sign in</a></p>
         </section>
         <aside class="auth-aside">
-          <div class="glass-panel">
-            <p class="eyebrow">Privacy-first prototype</p>
-            <h2>No real email is sent, and no real student data should be entered until a production backend and privacy review are configured.</h2>
+          <div class="portal-preview compact-preview">
+            <p class="eyebrow">Staff access</p>
+            <h2>For teachers, specialists, and administrators.</h2>
+            <p>Use demo data only until the school connects a production database and completes privacy review.</p>
           </div>
         </aside>
       </main>
@@ -1861,6 +1889,11 @@
       navigate("dashboard");
       return;
     }
+    if (action === "forgot-password") {
+      event.preventDefault();
+      toast("Password reset is not connected in this prototype. Contact your school administrator.", "success");
+      return;
+    }
     if (action === "set-log-type") {
       const form = actionTarget.closest("form");
       form.querySelector("input[name='type']").value = actionTarget.dataset.type;
@@ -1999,9 +2032,35 @@
 
   function submitSignIn(form) {
     const values = valuesFromForm(form);
-    window.StanbridgeStore.login(values.email, values.password);
-    toast("Signed in.");
-    navigate("dashboard");
+    const button = form.querySelector("button[type='submit']");
+    const error = form.querySelector("[data-form-error]");
+    form.querySelectorAll("input").forEach((input) => input.removeAttribute("aria-invalid"));
+    if (error) {
+      error.hidden = true;
+      error.textContent = "";
+    }
+    if (button) {
+      button.disabled = true;
+      button.textContent = "Signing in...";
+    }
+
+    window.setTimeout(() => {
+      try {
+        window.StanbridgeStore.login(values.email, values.password);
+        toast("Signed in.");
+        navigate("dashboard");
+      } catch (errorObject) {
+        form.querySelectorAll("input[name='email'], input[name='password']").forEach((input) => input.setAttribute("aria-invalid", "true"));
+        if (error) {
+          error.hidden = false;
+          error.textContent = errorObject.message || "Email or password did not match a staff account.";
+        }
+        if (button) {
+          button.disabled = false;
+          button.textContent = button.dataset.defaultText || "Sign in";
+        }
+      }
+    }, 260);
   }
 
   function submitCreateAccount(form) {
