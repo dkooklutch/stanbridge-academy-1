@@ -311,13 +311,14 @@
           <div class="portal-preview">
             <div class="preview-header">
               <div>
-                <p class="eyebrow">Today at a glance</p>
-                <h2>Staff dashboard preview</h2>
+                <p class="eyebrow">Stanbridge Academy / Staff Portal</p>
+                <h2>Student support, documented clearly.</h2>
               </div>
-              <span class="status-pill ready-to-send">Prototype</span>
+              <span class="status-pill ready-to-send">Staff view</span>
             </div>
+            <p class="preview-copy">Review recent notes, follow-ups, and weekly family updates before the school day starts.</p>
             <div class="preview-metrics">
-              <article><strong>3</strong><span>follow-ups today</span></article>
+              <article><strong>3</strong><span>follow-ups</span></article>
               <article><strong>2</strong><span>reports ready</span></article>
               <article><strong>12</strong><span>notes this week</span></article>
             </div>
@@ -378,7 +379,7 @@
         </section>
         <aside class="auth-aside">
           <div class="portal-preview compact-preview">
-            <p class="eyebrow">Staff access</p>
+            <p class="eyebrow">Stanbridge Academy / Staff Portal</p>
             <h2>For teachers, specialists, and administrators.</h2>
             <p>Use demo data only until the school connects a production database and completes privacy review.</p>
           </div>
