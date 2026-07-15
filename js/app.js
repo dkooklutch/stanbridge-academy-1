@@ -312,11 +312,11 @@
             <div class="preview-header">
               <div>
                 <p class="eyebrow">Stanbridge Academy / Staff Portal</p>
-                <h2>Student support, documented clearly.</h2>
+                <h2>One hub for the school day.</h2>
               </div>
               <span class="status-pill ready-to-send">Staff view</span>
             </div>
-            <p class="preview-copy">Review recent notes, follow-ups, and weekly family updates before the school day starts.</p>
+            <p class="preview-copy">Daily observations, follow-ups, strategies, and weekly family updates stay organized for the staff team.</p>
             <div class="preview-metrics">
               <article><strong>3</strong><span>follow-ups</span></article>
               <article><strong>2</strong><span>reports ready</span></article>
@@ -362,7 +362,7 @@
               <input name="name" required autocomplete="name" placeholder="Your name" />
             </label>
             <label>Email
-              <input name="email" type="email" autocomplete="email" required placeholder="name@stanbridge.example" />
+              <input name="email" type="email" autocomplete="email" required placeholder="name@stanbridgeacademy.org" />
             </label>
             <label>Password
               <input name="password" type="password" autocomplete="new-password" required minlength="6" />
@@ -380,7 +380,7 @@
         <aside class="auth-aside">
           <div class="portal-preview compact-preview">
             <p class="eyebrow">Stanbridge Academy / Staff Portal</p>
-            <h2>For teachers, specialists, and administrators.</h2>
+            <h2>Built for teachers, specialists, and administrators.</h2>
             <p>Use demo data only until the school connects a production database and completes privacy review.</p>
           </div>
         </aside>
@@ -407,7 +407,7 @@
         <section class="dashboard-hero">
           <div>
             <p class="eyebrow">Teacher Dashboard</p>
-            <h1>All students, shared support context, and the next useful action.</h1>
+            <h1>Student supports, follow-ups, and family updates in one place.</h1>
           </div>
           <div class="metric-strip">
             ${metric("Students", stats.students)}
