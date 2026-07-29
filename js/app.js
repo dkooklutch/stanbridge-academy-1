@@ -4,19 +4,30 @@
 
   const TAB_LABELS = [
     ["overview", "Overview"],
-    ["notes", "Notes"],
-    ["supports", "Supports"],
+    ["spark", "Strengths & Motivators"],
+    ["communication", "Communication"],
+    ["daily", "Daily Needs"],
+    ["executive", "Executive Function"],
+    ["sensory", "Sensory & Regulation"],
+    ["engagement", "Engagement"],
+    ["supports", "Support Suggestions"],
     ["patterns", "Trends"],
     ["reports", "Weekly summaries"],
+    ["archive", "All Notes"],
   ];
 
   const QUICK_TYPES = [
+    "Spark",
+    "Motivator",
+    "Trigger",
     "Observation",
-    "Strength / success",
-    "Learning / engagement",
+    "Executive Functioning",
     "Communication",
-    "Sensory / regulation",
-    "Concern / follow-up",
+    "Sensory/Regulation",
+    "Engagement",
+    "Parent Note",
+    "Concern",
+    "Follow-Up Needed",
   ];
 
   const DAILY_BUTTONS = [
@@ -691,15 +702,19 @@
         <p class="eyebrow">New note</p>
         <h2>Record an observation</h2>
         <form class="quick-log-form" data-form="quick-log" data-student-id="${student.id}">
+          <input type="hidden" name="type" value="Observation" />
           <label>
             <span class="sr-only">Observation</span>
             <textarea name="text" required rows="5" placeholder="What happened? What helped?"></textarea>
           </label>
-          <label>Category
-            <select name="type">
-              ${QUICK_TYPES.map((type) => `<option>${escapeHtml(type)}</option>`).join("")}
-            </select>
-          </label>
+          <fieldset class="quick-category-fieldset">
+            <legend>Category</legend>
+            <div class="quick-type-grid">
+              ${QUICK_TYPES.map(
+                (type) => `<button class="${type === "Observation" ? "active" : ""}" type="button" data-action="set-log-type" data-type="${escapeAttr(type)}">${escapeHtml(type)}</button>`
+              ).join("")}
+            </div>
+          </fieldset>
           <label>Where?
             <input name="classSetting" placeholder="Class, arrival, lunch..." />
           </label>
