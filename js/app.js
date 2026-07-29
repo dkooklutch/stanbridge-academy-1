@@ -9,7 +9,7 @@
     ["executive", "Executive Functioning", "▦"],
     ["sensory", "Sensory & Regulation", "◌"],
     ["engagement", "Engagement Log", "▤"],
-    ["strategist", "Strategist", "✧"],
+    ["strategist", "Support Plan", "◎"],
     ["patterns", "Patterns", "↗"],
     ["reports", "Reports", "▣"],
     ["archive", "Notes Archive", "⌕"],
@@ -269,7 +269,8 @@
       </header>
       ${content}
       <footer class="app-footer">
-        <span>This prototype is for educational support documentation. It should not be used for medical diagnosis. Follow school privacy policies and FERPA requirements before using real student data.</span>
+        <span>Stanbridge Academy · Authorized staff use only</span>
+        <span>Student information is confidential. Follow school privacy and recordkeeping policies.</span>
       </footer>
     `;
   }
@@ -281,8 +282,8 @@
           <div class="auth-brand">
             <span class="brand-mark large">S</span>
             <div>
-              <h1>Stanbridge Student Support Hub</h1>
-              <p>Teacher support documentation and weekly family communication</p>
+              <h1>Staff sign in</h1>
+              <p>Student Support Hub</p>
             </div>
           </div>
           <form class="form-stack" data-form="signin">
@@ -300,9 +301,9 @@
             <button class="primary-button" type="submit" data-default-text="Sign in">Sign in</button>
           </form>
           <div class="demo-access">
-            <span>Demo access</span>
-            <button type="button" class="chip-button" data-action="demo-login" data-email="lena.morales@stanbridge.example">Demo teacher</button>
-            <button type="button" class="chip-button" data-action="demo-login" data-email="maren.sato@stanbridge.example">Demo administrator</button>
+            <span>Training access</span>
+            <button type="button" class="chip-button" data-action="demo-login" data-email="lena.morales@stanbridge.example">Teacher workspace</button>
+            <button type="button" class="chip-button" data-action="demo-login" data-email="maren.sato@stanbridge.example">Administrator workspace</button>
           </div>
           <p class="auth-note">For authorized school staff only.</p>
           <p class="muted centered">First launch? <a href="#create-account">Create account</a>.</p>
@@ -311,12 +312,12 @@
           <div class="portal-preview">
             <div class="preview-header">
               <div>
-                <p class="eyebrow">Stanbridge Academy / Staff Portal</p>
-                <h2>One hub for the school day.</h2>
+                <p class="eyebrow">Stanbridge Academy</p>
+                <h2>Student Support Hub</h2>
               </div>
               <span class="status-pill ready-to-send">Staff view</span>
             </div>
-            <p class="preview-copy">Daily observations, follow-ups, strategies, and weekly family updates stay organized for the staff team.</p>
+            <p class="preview-copy">A shared workspace for observations, support planning, follow-ups, and family communication.</p>
             <div class="preview-metrics">
               <article><strong>3</strong><span>follow-ups</span></article>
               <article><strong>2</strong><span>reports ready</span></article>
@@ -354,7 +355,7 @@
             <span class="brand-mark large">S</span>
             <div>
               <h1>Create Teacher Account</h1>
-              <p>Set up a staff account for this prototype.</p>
+              <p>Set up an authorized staff account.</p>
             </div>
           </div>
           <form class="form-stack" data-form="create-account">
@@ -381,7 +382,7 @@
           <div class="portal-preview compact-preview">
             <p class="eyebrow">Stanbridge Academy / Staff Portal</p>
             <h2>Built for teachers, specialists, and administrators.</h2>
-            <p>Use demo data only until the school connects a production database and completes privacy review.</p>
+            <p>Account access is limited to authorized Stanbridge Academy staff.</p>
           </div>
         </aside>
       </main>
@@ -406,8 +407,9 @@
       <main class="page dashboard-page">
         <section class="dashboard-hero">
           <div>
-            <p class="eyebrow">Teacher Dashboard</p>
-            <h1>Student supports, follow-ups, and family updates in one place.</h1>
+            <p class="eyebrow">${new Intl.DateTimeFormat("en-US", { weekday: "long", month: "long", day: "numeric" }).format(new Date())}</p>
+            <h1>Good ${new Date().getHours() < 12 ? "morning" : new Date().getHours() < 17 ? "afternoon" : "evening"}, ${escapeHtml((state.currentUser.name || "").split(" ")[0])}.</h1>
+            <p class="hero-copy">Here is what needs attention across your student support records.</p>
           </div>
           <div class="metric-strip">
             ${metric("Students", stats.students)}
@@ -420,23 +422,23 @@
         <section class="quick-actions-row" aria-label="Today's quick actions">
           <button class="action-card" data-modal="global-note">
             <span>＋</span>
-            <strong>Add student note</strong>
-            <small>Quick observation for any learner</small>
+            <strong>Record an observation</strong>
+            <small>Add a note to any student record</small>
           </button>
           <a class="action-card" href="#reports">
             <span>▣</span>
-            <strong>Generate weekly reports</strong>
-            <small>Review saved reports and drafts</small>
+            <strong>Weekly summaries</strong>
+            <small>Prepare and review family updates</small>
           </a>
           <button class="action-card" data-action="scroll-followups">
             <span>!</span>
-            <strong>Review follow-ups</strong>
-            <small>Emergency, concerns, and low engagement</small>
+            <strong>Open follow-ups</strong>
+            <small>Review items that need staff attention</small>
           </button>
           <button class="action-card" data-action="filter-emergency">
             <span>◇</span>
-            <strong>Recent emergency notes</strong>
-            <small>Check unresolved items</small>
+            <strong>Priority communication</strong>
+            <small>Check unresolved family contact</small>
           </button>
         </section>
 
@@ -473,8 +475,8 @@
 
             <div class="section-heading">
               <div>
-                <h2>Student Roster</h2>
-                <p>${students.length} visible, sorted by last name.</p>
+                  <h2>Student roster</h2>
+                  <p>${students.length} students · sorted by last name</p>
               </div>
             </div>
             <div class="student-grid">
@@ -486,8 +488,8 @@
             <section id="followups" class="panel">
               <div class="section-heading compact">
                 <div>
-                  <h2>Students Needing Follow-Up</h2>
-                  <p>Based on recent logs and unresolved notes.</p>
+                  <h2>Needs follow-up</h2>
+                  <p>From recent records and open items</p>
                 </div>
               </div>
               <div class="mini-list">
@@ -498,8 +500,8 @@
             <section class="panel">
               <div class="section-heading compact">
                 <div>
-                  <h2>Recent Activity</h2>
-                  <p>Visible across all teachers.</p>
+                  <h2>Recent activity</h2>
+                  <p>Updates from the staff team</p>
                 </div>
               </div>
               <div class="activity-list">
@@ -656,11 +658,11 @@
                 </div>
               </div>
               <div class="profile-actions">
-                <button class="secondary-button" data-modal="edit-student" data-student-id="${student.id}">Edit Info</button>
-                <button class="secondary-button" data-modal="parent-note" data-student-id="${student.id}">Add Parent Note</button>
-                <button class="warning-button" data-modal="emergency-note" data-student-id="${student.id}">Emergency Parent Note</button>
-                <button class="secondary-button" data-modal="daily-photo-note" data-student-id="${student.id}">Daily Photo Note</button>
-                <a class="primary-button" href="#student/${student.id}?tab=reports">Generate Weekly Report</a>
+                <button class="secondary-button" data-modal="edit-student" data-student-id="${student.id}">Edit student</button>
+                <button class="secondary-button" data-modal="parent-note" data-student-id="${student.id}">Family note</button>
+                <button class="warning-button" data-modal="emergency-note" data-student-id="${student.id}">Priority contact</button>
+                <button class="secondary-button" data-modal="daily-photo-note" data-student-id="${student.id}">Photo note</button>
+                <a class="primary-button" href="#student/${student.id}?tab=reports">Weekly summary</a>
               </div>
               <div class="profile-snapshot">
                 <div><strong>${notes.length}</strong><span>Shared notes</span></div>
@@ -1073,10 +1075,10 @@
       <section class="panel strategist-hero">
         <div>
           <p class="eyebrow">Rule-based strategist</p>
-          <h2>AI-inspired support suggestions from logged observations</h2>
-          <p>Suggestions use cautious language and never diagnose. Connect a real AI API later by replacing the strategist module.</p>
+          <h2>Support planning from recorded observations</h2>
+          <p>Review emerging themes, effective supports, and next steps before adding them to the student plan.</p>
         </div>
-        <button class="primary-button" data-action="generate-strategy-plan" data-student-id="${student.id}">Generate Strategy Plan</button>
+        <button class="primary-button" data-action="generate-strategy-plan" data-student-id="${student.id}">Build support plan</button>
       </section>
       ${plan ? renderStrategyPlan(plan) : ""}
       <div class="insight-board">
@@ -1129,7 +1131,7 @@
         <div class="section-heading compact">
           <div>
             <h2>Patterns</h2>
-            <p>Simple trend views for the selected student. Filters are represented as demo controls for the MVP.</p>
+            <p>Review trends across the selected student's recorded observations.</p>
           </div>
         </div>
         <div class="filter-panel compact-filters">
@@ -1424,7 +1426,7 @@
         <section class="dashboard-hero">
           <div>
             <p class="eyebrow">Admin Settings</p>
-            <h1>Manage teacher accounts, students, and prototype data.</h1>
+            <h1>Manage staff access and student records.</h1>
           </div>
         </section>
         <div class="tab-grid one-one">
@@ -1478,7 +1480,7 @@
               <h2>Student Administration</h2>
               <p>Archive students instead of deleting whenever possible.</p>
             </div>
-            <button class="ghost-danger" data-action="reset-demo-data">Reset Demo Data</button>
+            <button class="ghost-danger" data-action="reset-demo-data">Reset training data</button>
           </div>
           <div class="admin-student-list">
             ${state.data.students.map((student) => `
@@ -1759,7 +1761,7 @@
     return `
       <form class="form-stack" data-form="daily-photo-note" data-student-id="${student.id}">
         <p class="muted">Prototype photo notes store an optional image URL only. Do not upload real student images in this local MVP.</p>
-        <label>Image URL <input name="imageUrl" placeholder="Optional prototype image URL" /></label>
+        <label>Image URL <input name="imageUrl" placeholder="Optional image URL" /></label>
         <label>Photo note <textarea name="text" rows="6" required placeholder="What does this moment show about engagement or support?"></textarea></label>
         <label>Class/setting <input name="classSetting" /></label>
         <div class="toggle-row">
@@ -1886,13 +1888,13 @@
     }
     if (action === "demo-login") {
       window.StanbridgeStore.login(actionTarget.dataset.email, "stanbridge2026");
-      toast("Signed in with demo account.");
+      toast("Training workspace opened.");
       navigate("dashboard");
       return;
     }
     if (action === "forgot-password") {
       event.preventDefault();
-      toast("Password reset is not connected in this prototype. Contact your school administrator.", "success");
+      toast("Contact your school administrator to reset your password.", "success");
       return;
     }
     if (action === "set-log-type") {
@@ -1959,9 +1961,9 @@
       return;
     }
     if (action === "delete-student") {
-      if (confirm("Delete this student and all local prototype records for them?")) {
+      if (confirm("Delete this student and all locally stored records for them?")) {
         window.StanbridgeStore.deleteStudent(actionTarget.dataset.studentId);
-        toast("Student deleted from local prototype data.");
+        toast("Student and local records deleted.");
         render();
       }
       return;
@@ -1984,7 +1986,7 @@
         toast("You cannot delete the signed-in account.", "error");
         return;
       }
-      if (confirm("Delete this teacher account from the local prototype?")) {
+      if (confirm("Delete this staff account?")) {
         window.StanbridgeStore.deleteUser(actionTarget.dataset.userId);
         toast("Teacher account deleted.");
         render();
@@ -1992,7 +1994,7 @@
       return;
     }
     if (action === "reset-demo-data") {
-      if (confirm("Reset all prototype data to the original demo set?")) {
+      if (confirm("Reset all training data to the original sample set?")) {
         window.StanbridgeStore.resetDemoData();
         toast("Demo data reset.");
         navigate("signin");
