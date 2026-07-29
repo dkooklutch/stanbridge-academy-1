@@ -3,30 +3,20 @@
   const toastRoot = document.getElementById("toast-root");
 
   const TAB_LABELS = [
-    ["spark", "Spark Profile", "✦"],
-    ["communication", "Communication", "◐"],
-    ["daily", "Daily Needs", "☑"],
-    ["executive", "Executive Functioning", "▦"],
-    ["sensory", "Sensory & Regulation", "◌"],
-    ["engagement", "Engagement Log", "▤"],
-    ["strategist", "Support Plan", "◎"],
-    ["patterns", "Patterns", "↗"],
-    ["reports", "Reports", "▣"],
-    ["archive", "Notes Archive", "⌕"],
+    ["overview", "Overview"],
+    ["notes", "Notes"],
+    ["supports", "Supports"],
+    ["patterns", "Trends"],
+    ["reports", "Weekly summaries"],
   ];
 
   const QUICK_TYPES = [
-    "Spark",
-    "Motivator",
-    "Trigger",
     "Observation",
-    "Executive Functioning",
+    "Strength / success",
+    "Learning / engagement",
     "Communication",
-    "Sensory/Regulation",
-    "Engagement",
-    "Parent Note",
-    "Concern",
-    "Follow-Up Needed",
+    "Sensory / regulation",
+    "Concern / follow-up",
   ];
 
   const DAILY_BUTTONS = [
@@ -435,11 +425,6 @@
             <strong>Open follow-ups</strong>
             <small>Review items that need staff attention</small>
           </button>
-          <button class="action-card" data-action="filter-emergency">
-            <span>◇</span>
-            <strong>Priority communication</strong>
-            <small>Check unresolved family contact</small>
-          </button>
         </section>
 
         <section class="dashboard-grid">
@@ -631,7 +616,7 @@
   function renderStudentProfile(studentId, query) {
     const student = getStudent(studentId);
     if (!student) return renderNotFound("Student not found.");
-    const activeTab = query.get("tab") || "spark";
+    const activeTab = query.get("tab") || "overview";
     const alerts = state.data.emergencyParentNotes.filter((note) => note.studentId === student.id && !note.resolved);
     const notes = state.data.notes.filter((note) => note.studentId === student.id);
     const reports = state.data.reports.filter((report) => report.studentId === student.id);
@@ -658,24 +643,22 @@
                 </div>
               </div>
               <div class="profile-actions">
-                <button class="secondary-button" data-modal="edit-student" data-student-id="${student.id}">Edit student</button>
                 <button class="secondary-button" data-modal="parent-note" data-student-id="${student.id}">Family note</button>
-                <button class="warning-button" data-modal="emergency-note" data-student-id="${student.id}">Priority contact</button>
-                <button class="secondary-button" data-modal="daily-photo-note" data-student-id="${student.id}">Photo note</button>
-                <a class="primary-button" href="#student/${student.id}?tab=reports">Weekly summary</a>
-              </div>
-              <div class="profile-snapshot">
-                <div><strong>${notes.length}</strong><span>Shared notes</span></div>
-                <div><strong>${state.data.engagementLogs.filter((log) => log.studentId === student.id).length}</strong><span>Engagement logs</span></div>
-                <div><strong>${reports.length}</strong><span>Reports</span></div>
+                <details class="profile-more-actions">
+                  <summary class="secondary-button">More</summary>
+                  <div>
+                    <button class="warning-button" data-modal="emergency-note" data-student-id="${student.id}">Priority contact</button>
+                    <button class="secondary-button" data-modal="daily-photo-note" data-student-id="${student.id}">Photo note</button>
+                  </div>
+                </details>
               </div>
             </div>
 
             <nav class="tabbar" aria-label="Student profile tabs">
               ${TAB_LABELS.map(
-                ([id, label, icon]) => `
+                ([id, label]) => `
                   <a class="${id === activeTab ? "active" : ""}" href="#student/${student.id}?tab=${id}">
-                    <span>${icon}</span>${label}
+                    ${label}
                   </a>
                 `
               ).join("")}
@@ -705,41 +688,48 @@
   function renderQuickLog(student) {
     return `
       <div class="panel sticky-panel">
-        <p class="eyebrow">Quick Log</p>
-        <h2>What did you notice today?</h2>
+        <p class="eyebrow">New note</p>
+        <h2>Record an observation</h2>
         <form class="quick-log-form" data-form="quick-log" data-student-id="${student.id}">
-          <input type="hidden" name="type" value="Observation" />
-          <div class="quick-type-grid">
-            ${QUICK_TYPES.map(
-              (type) => `<button class="${type === "Observation" ? "active" : ""}" type="button" data-action="set-log-type" data-type="${escapeAttr(type)}">${escapeHtml(type)}</button>`
-            ).join("")}
-          </div>
           <label>
             <span class="sr-only">Observation</span>
-            <textarea name="text" required rows="6" placeholder="What did you notice today?"></textarea>
+            <textarea name="text" required rows="5" placeholder="What happened? What helped?"></textarea>
           </label>
-          <label>Class/setting
-            <input name="classSetting" placeholder="English, advisory, lunch, transition..." />
-          </label>
-          <label>Tags
-            <input name="tags" placeholder="visual checklist helped, anxiety, peer success" />
-          </label>
-          <div class="toggle-row">
-            <label><input type="checkbox" name="includeInWeeklyReport" /> Include in weekly report</label>
-          </div>
-          <label>Visibility
-            <select name="visibility">
-              <option value="internal only">Internal only</option>
-              <option value="include in parent report">Parent-visible</option>
+          <label>Category
+            <select name="type">
+              ${QUICK_TYPES.map((type) => `<option>${escapeHtml(type)}</option>`).join("")}
             </select>
           </label>
-          <button class="primary-button full" type="submit">Save Log</button>
+          <label>Where?
+            <input name="classSetting" placeholder="Class, arrival, lunch..." />
+          </label>
+          <div class="toggle-row">
+            <label><input type="checkbox" name="includeInWeeklyReport" /> Use in weekly summary</label>
+          </div>
+          <details class="optional-fields">
+            <summary>More options</summary>
+            <div>
+              <label>Keywords
+                <input name="tags" placeholder="Optional" />
+              </label>
+              <label>Visibility
+                <select name="visibility">
+                  <option value="internal only">Staff only</option>
+                  <option value="include in parent report">Family-visible</option>
+                </select>
+              </label>
+            </div>
+          </details>
+          <button class="primary-button full" type="submit">Save note</button>
         </form>
       </div>
     `;
   }
 
   function renderTab(tab, student) {
+    if (tab === "overview") return renderOverviewTab(student);
+    if (tab === "notes") return renderNotesTab(student);
+    if (tab === "supports") return renderSupportsTab(student);
     if (tab === "spark") return renderSparkTab(student);
     if (tab === "communication") return renderCommunicationTab(student);
     if (tab === "daily") return renderDailyTab(student);
@@ -750,7 +740,91 @@
     if (tab === "patterns") return renderPatternsTab(student);
     if (tab === "reports") return renderReportsTab(student);
     if (tab === "archive") return renderArchiveTab(student);
-    return renderSparkTab(student);
+    return renderOverviewTab(student);
+  }
+
+  function renderOverviewTab(student) {
+    const recentNotes = getStudentNotes(student.id).slice(0, 5);
+    return `
+      <div class="overview-layout">
+        <section class="panel">
+          <div class="section-heading compact">
+            <div>
+              <h2>What staff should know</h2>
+              <p>The essentials for working with ${escapeHtml(student.firstName)} today.</p>
+            </div>
+            <button class="secondary-button compact-button" data-modal="edit-student" data-student-id="${student.id}">Edit</button>
+          </div>
+          <div class="essential-grid">
+            ${infoCard("Strengths", student.strengths)}
+            ${infoCard("Motivators", student.motivators)}
+            ${infoCard("Communication", student.communicationStyle)}
+            ${infoCard("Helpful supports", student.accommodations)}
+            ${infoCard("Things to watch for", student.triggers)}
+            ${infoCard("Current goals", student.currentGoals)}
+          </div>
+        </section>
+        <section class="panel recent-notes-panel">
+          <div class="section-heading compact">
+            <div>
+              <h2>Recent notes</h2>
+              <p>Latest updates from the staff team.</p>
+            </div>
+            <a class="secondary-button compact-button" href="#student/${student.id}?tab=notes">View all</a>
+          </div>
+          ${renderNoteTimeline(recentNotes)}
+        </section>
+      </div>
+    `;
+  }
+
+  function renderNotesTab(student) {
+    const notes = getStudentNotes(student.id);
+    return `
+      <section class="panel">
+        <div class="section-heading compact">
+          <div>
+            <h2>Observations and notes</h2>
+            <p>${notes.length} saved updates, newest first.</p>
+          </div>
+        </div>
+        ${renderNoteTimeline(notes)}
+      </section>
+    `;
+  }
+
+  function renderSupportsTab(student) {
+    return `
+      <section class="panel">
+        <div class="section-heading compact">
+          <div>
+            <h2>Teaching supports</h2>
+            <p>Practical guidance staff can use across the school day.</p>
+          </div>
+          <button class="secondary-button compact-button" data-modal="edit-student" data-student-id="${student.id}">Edit supports</button>
+        </div>
+        <div class="support-sections">
+          <section>
+            <h3>Communication</h3>
+            ${infoCard("Best prompts", student.profile?.bestPrompts)}
+            ${infoCard("How they ask for help", student.profile?.helpSigns)}
+            ${infoCard("Avoid", student.profile?.whatNotToDo)}
+          </section>
+          <section>
+            <h3>Daily routines</h3>
+            ${infoCard("Transitions", student.profile?.transitionSupport)}
+            ${infoCard("Organization", student.profile?.materialsOrganization)}
+            ${infoCard("Breaks", student.profile?.breaksNeeded)}
+          </section>
+          <section>
+            <h3>Regulation</h3>
+            ${infoCard("Helpful tools", student.profile?.helpfulTools)}
+            ${infoCard("Early signs", student.profile?.escalationSigns)}
+            ${infoCard("Recovery", student.profile?.recoveryStrategies)}
+          </section>
+        </div>
+      </section>
+    `;
   }
 
   function renderSparkTab(student) {
@@ -1074,7 +1148,7 @@
     return `
       <section class="panel strategist-hero">
         <div>
-          <p class="eyebrow">Rule-based strategist</p>
+          <p class="eyebrow">Support planning</p>
           <h2>Support planning from recorded observations</h2>
           <p>Review emerging themes, effective supports, and next steps before adding them to the student plan.</p>
         </div>
@@ -1130,40 +1204,15 @@
       <section class="panel">
         <div class="section-heading compact">
           <div>
-            <h2>Patterns</h2>
-            <p>Review trends across the selected student's recorded observations.</p>
+            <h2>Recent trends</h2>
+            <p>A simple view of recurring themes in recorded observations.</p>
           </div>
-        </div>
-        <div class="filter-panel compact-filters">
-          <label>Range
-            <select>
-              <option>Last 7 days</option>
-              <option>Last 30 days</option>
-              <option>Semester</option>
-              <option>Custom date range</option>
-            </select>
-          </label>
-          <label>Teacher
-            <select>
-              <option>All teachers</option>
-              ${unique(state.data.notes.filter((note) => note.studentId === student.id).map((note) => note.authorName)).map((name) => `<option>${escapeHtml(name)}</option>`).join("")}
-            </select>
-          </label>
-          <label>Class/setting
-            <input placeholder="Any class/setting" />
-          </label>
         </div>
       </section>
       <div class="pattern-grid">
         ${chartCard("Engagement over time", patterns.engagement)}
-        ${chartCard("Regulation over time", patterns.regulation)}
         ${chartCard("Most common triggers", patterns.triggers)}
         ${chartCard("Most helpful supports", patterns.supports)}
-        ${chartCard("Notes by category", patterns.categories)}
-        ${chartCard("Notes by teacher", patterns.teachers)}
-        ${chartCard("Independence growth", patterns.independence)}
-        ${chartCard("Executive functioning ratings", patterns.ef)}
-        ${chartCard("Sensory events by time of day", patterns.sensoryTime)}
         ${chartCard("Positive moments over time", patterns.positive)}
       </div>
     `;
@@ -1205,7 +1254,8 @@
     return `
       <div class="tab-grid one-one">
         <section class="panel">
-          <h2>Weekly Spark Report</h2>
+          <h2>Prepare weekly summary</h2>
+          <p>Start with the saved family-visible notes, then review the draft before saving.</p>
           <form class="form-stack" data-form="generate-report" data-student-id="${student.id}">
             <div class="inline-fields">
               <label>Date range start
@@ -1215,19 +1265,9 @@
                 <input name="dateRangeEnd" type="date" value="${draft?.dateRangeEnd || end}" required />
               </label>
             </div>
-            <div class="tag-checkbox-grid">
-              ${[
-                ["includeSparkNotes", "Include spark notes"],
-                ["includeEngagementLog", "Include engagement log"],
-                ["includeExecutiveFunctioning", "Include executive functioning"],
-                ["includeCommunication", "Include communication"],
-                ["includeSensoryRegulation", "Include sensory/regulation"],
-                ["includeTeacherRecommendations", "Include teacher recommendations"],
-                ["includeGoalsNextWeek", "Include goals for next week"],
-              ]
-                .map(([name, label]) => `<label><input type="checkbox" name="${name}" checked /> ${label}</label>`)
-                .join("")}
-            </div>
+            ${["includeSparkNotes", "includeEngagementLog", "includeExecutiveFunctioning", "includeCommunication", "includeSensoryRegulation", "includeTeacherRecommendations", "includeGoalsNextWeek"]
+              .map((name) => `<input type="checkbox" name="${name}" checked hidden />`)
+              .join("")}
             <details class="note-selector">
               <summary>Select notes to include</summary>
               ${selectableNotes.length ? selectableNotes.map((note) => `
@@ -1237,13 +1277,11 @@
                 </label>
               `).join("") : `<p class="muted">No parent-visible notes in this range yet.</p>`}
             </details>
-            <label>Teacher recommendations / home support
-              <textarea name="homeSupport" rows="3" placeholder="Optional suggested home support..."></textarea>
+            <label>Optional family guidance
+              <textarea name="homeSupport" rows="3" placeholder="Anything useful for home this week"></textarea>
             </label>
-            <label>Teacher notes
-              <textarea name="teacherNotes" rows="3" placeholder="Optional closing note..."></textarea>
-            </label>
-            <button class="primary-button" type="submit">Generate Draft</button>
+            <input type="hidden" name="teacherNotes" value="" />
+            <button class="primary-button" type="submit">Create draft</button>
           </form>
         </section>
 
@@ -1760,7 +1798,7 @@
     const student = getStudent(state.modal.studentId);
     return `
       <form class="form-stack" data-form="daily-photo-note" data-student-id="${student.id}">
-        <p class="muted">Prototype photo notes store an optional image URL only. Do not upload real student images in this local MVP.</p>
+        <p class="muted">Photo notes currently store an optional image link. Do not use real student images until secure storage is approved.</p>
         <label>Image URL <input name="imageUrl" placeholder="Optional image URL" /></label>
         <label>Photo note <textarea name="text" rows="6" required placeholder="What does this moment show about engagement or support?"></textarea></label>
         <label>Class/setting <input name="classSetting" /></label>
@@ -2584,11 +2622,11 @@
   }
 
   function sourceForType(type) {
-    if (/spark|motivator/i.test(type)) return "Spark Profile";
+    if (/spark|motivator|strength|success/i.test(type)) return "Spark Profile";
     if (/executive/i.test(type)) return "Executive Functioning";
     if (/communication/i.test(type)) return "Communication";
     if (/sensory|regulation/i.test(type)) return "Sensory & Regulation";
-    if (/engagement/i.test(type)) return "Engagement Log";
+    if (/learning|engagement/i.test(type)) return "Engagement Log";
     if (/parent/i.test(type)) return "Parent Note";
     if (/follow|concern|trigger|observation/i.test(type)) return "Notes Archive";
     return "Quick Log";
