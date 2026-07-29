@@ -196,7 +196,7 @@
     if (lowEngagementCount > 0) {
       questions.push("Are low-engagement moments clustering by time of day, class setting, or task type?");
     }
-    questions.push(`What is one strength from ${student.firstName}'s Spark Profile that can be used in tomorrow's lesson?`);
+    questions.push(`What is one recorded strength that can be used in ${student.firstName}'s lesson tomorrow?`);
     return uniqueOrFallback(questions, ["What should the team log next to make patterns clearer?"]);
   }
 

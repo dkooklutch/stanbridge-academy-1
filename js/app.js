@@ -794,6 +794,9 @@
   }
 
   function renderSupportsTab(student) {
+    const insights = window.StanbridgeStrategist.analyze(student, state.data);
+    const plan = state.profile.strategyPlans[student.id];
+    const noteCount = getStudentNotes(student.id).length;
     return `
       <section class="panel">
         <div class="section-heading compact">
@@ -822,6 +825,53 @@
             ${infoCard("Early signs", student.profile?.escalationSigns)}
             ${infoCard("Recovery", student.profile?.recoveryStrategies)}
           </section>
+        </div>
+      </section>
+      <section class="panel support-suggestions">
+        <div class="section-heading compact">
+          <div>
+            <p class="eyebrow">Suggested from ${noteCount} recorded ${noteCount === 1 ? "note" : "notes"}</p>
+            <h2>Suggested next steps</h2>
+            <p>These suggestions update as staff add observations. Review them with the student team before changing supports.</p>
+          </div>
+          <button class="primary-button compact-button" data-action="generate-strategy-plan" data-student-id="${student.id}">
+            Build focused plan
+          </button>
+        </div>
+        <div class="suggestion-grid">
+          ${suggestionList("What the record shows", insights.patterns.slice(0, 3))}
+          ${suggestionList("Try next", insights.helpfulStrategies.slice(0, 3))}
+          ${suggestionList("Discuss with the team", insights.questionsForTeam.slice(0, 3))}
+        </div>
+      </section>
+      ${plan ? renderCompactSupportPlan(plan) : ""}
+    `;
+  }
+
+  function suggestionList(title, items) {
+    return `
+      <section>
+        <h3>${escapeHtml(title)}</h3>
+        <ul>
+          ${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+        </ul>
+      </section>
+    `;
+  }
+
+  function renderCompactSupportPlan(plan) {
+    return `
+      <section class="panel focused-plan">
+        <div class="section-heading compact">
+          <div>
+            <p class="eyebrow">Focused support plan</p>
+            <h2>Recommended plan for the classroom</h2>
+          </div>
+        </div>
+        <div class="suggestion-grid">
+          ${suggestionList("Immediate steps", plan.immediateStrategies)}
+          ${suggestionList("Longer-term supports", plan.longerTermSupports)}
+          ${suggestionList("Team discussion", [plan.teamDiscussionQuestion])}
         </div>
       </section>
     `;
@@ -1173,7 +1223,7 @@
       <section class="panel strategy-plan">
         <div class="section-heading compact">
           <div>
-            <h2>Generated Strategy Plan</h2>
+            <h2>Focused Strategy Plan</h2>
             <p>${formatDateTime(plan.createdAt)}</p>
           </div>
         </div>
@@ -1334,7 +1384,7 @@
         <div class="button-row">
           <button class="secondary-button compact-button" data-action="copy-report" data-report-id="${report.id}">Copy</button>
           <button class="secondary-button compact-button" data-action="download-report" data-report-id="${report.id}">Download</button>
-          ${report.status !== "Sent" ? `<button class="primary-button compact-button" data-action="send-report" data-report-id="${report.id}">Simulate Send</button>` : ""}
+          ${report.status !== "Sent" ? `<button class="primary-button compact-button" data-action="send-report" data-report-id="${report.id}">Mark as sent</button>` : ""}
         </div>
       </article>
     `;
@@ -1426,7 +1476,7 @@
         <section class="dashboard-hero">
           <div>
             <p class="eyebrow">Reports Archive</p>
-            <h1>Weekly Spark reports across all students.</h1>
+            <h1>Weekly summaries across all students.</h1>
           </div>
         </section>
         <section class="panel">
@@ -1739,7 +1789,7 @@
     const student = getStudent(state.modal.studentId);
     return `
       <form class="form-stack" data-form="parent-note" data-student-id="${student.id}">
-        <p class="muted">Prototype mode saves the note and can simulate sending. No real email is sent.</p>
+        <p class="muted">This saves the communication to the student record. Email delivery is not connected in this build.</p>
         <label>Parent note
           <textarea name="text" rows="7" required placeholder="Write a strength-based, parent-friendly update..."></textarea>
         </label>
@@ -1969,7 +2019,7 @@
     }
     if (action === "send-report") {
       window.StanbridgeStore.updateReport(actionTarget.dataset.reportId, { status: "Sent" });
-      toast("Prototype send complete. No real email was sent.");
+      toast("Marked as sent in the record. Email delivery is not connected.");
       render();
       return;
     }
@@ -2034,7 +2084,7 @@
     if (action === "reset-demo-data") {
       if (confirm("Reset all training data to the original sample set?")) {
         window.StanbridgeStore.resetDemoData();
-        toast("Demo data reset.");
+        toast("Training data reset.");
         navigate("signin");
       }
       return;
@@ -2254,7 +2304,7 @@
       state.currentUser
     );
     state.modal = null;
-    toast(values.status === "Sent" ? "Parent note saved and simulated as sent." : "Parent note saved.");
+    toast(values.status === "Sent" ? "Parent note marked as sent in the record." : "Parent note saved.");
     render();
   }
 

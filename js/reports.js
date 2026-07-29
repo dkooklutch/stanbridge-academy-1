@@ -112,7 +112,7 @@
         }
       : null;
 
-    const title = `Weekly Spark Report: ${formatDate(config.dateRangeStart)}-${formatDate(config.dateRangeEnd)}`;
+    const title = `Weekly Student Summary: ${formatDate(config.dateRangeStart)}-${formatDate(config.dateRangeEnd)}`;
     const sections = [
       ["Positive Highlights", positiveHighlights(student, sparkNotes, positiveNotes)],
       ["Academic Engagement", config.includeEngagementLog ? fallbackParagraph(engagementSummary, student.supportSummary) : ""],
